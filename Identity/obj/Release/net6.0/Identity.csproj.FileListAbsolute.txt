@@ -1,0 +1,8 @@
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.csproj.AssemblyReference.cache
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.AssemblyInfoInputs.cache
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.AssemblyInfo.cs
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.csproj.CoreCompileInputs.cache
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.MvcApplicationPartsAssemblyInfo.cache
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.RazorAssemblyInfo.cache
+C:\Projects\IdentityEF\Identity\obj\Release\net6.0\Identity.RazorAssemblyInfo.cs

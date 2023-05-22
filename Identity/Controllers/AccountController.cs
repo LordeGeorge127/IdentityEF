@@ -1,4 +1,5 @@
-﻿using Identity.Models;
+﻿using Identity.Interfaces;
+using Identity.Models;
 using Identity.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +8,12 @@ namespace Identity.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ISendGridEmail _sendGridEmail;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ISendGridEmail sendGridEmail)
         {
+            _sendGridEmail = sendGridEmail;
             _userManager=userManager;
             _signInManager = signInManager;
         }
@@ -24,6 +27,60 @@ namespace Identity.Controllers
             LoginViewModel loginViewModel = new LoginViewModel();
             loginViewModel.ReturnUrl = returnUrl ?? Url.Content("~/");
             return View(loginViewModel);
+        }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return RedirectToAction("ForgotPasswordConfirmation");       
+                }
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackurl = Url.Action("ResetPassword", "Account",
+                    new
+                    {
+                        userId = user.Id,
+                        code = code
+                    },
+                    protocol: HttpContext.Request.Scheme);
+                await _sendGridEmail.SendEmailAsync(model.Email,"Reset Email Confirmation","Please Reset your email by going to this " + "<a href=\"" + callbackurl + "\">link</a>");
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult ResetPassword(string code = null)
+        {
+            return code == null ? View("Error") : View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(resetPasswordViewModel.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError("Error", "User Not Found");
+                    return View();
+                }
+                var result = await _userManager.ResetPasswordAsync(user, resetPasswordViewModel.Code ,resetPasswordViewModel.Password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ResetPasswordConfirmation");
+                }
+               
+            }
+            return View(resetPasswordViewModel);
         }
         public async Task<IActionResult> Register(string?  returnUrl = null)
         {
@@ -56,7 +113,7 @@ namespace Identity.Controllers
             if (ModelState.IsValid) 
             {
             var result = await _signInManager.PasswordSignInAsync(loginViewModel.UserName, 
-                loginViewModel.Password, loginViewModel.RememberMe, lockoutOnFailure:false);
+                loginViewModel.Password, loginViewModel.RememberMe, lockoutOnFailure:true);
              
                 if (result.Succeeded)
                 {
@@ -64,11 +121,16 @@ namespace Identity.Controllers
                     return RedirectToAction("Index", "Home");
 
                 }
-                else
+                if (result.IsLockedOut)
                 {
+                    return View("Lockout");
+                }
+                else
+                { 
                     ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
                     return View(loginViewModel);
                 }
+               
             }
             return View(loginViewModel);
         }
@@ -78,6 +140,11 @@ namespace Identity.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");   
+        }
+        [HttpGet]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
         }
 
         
