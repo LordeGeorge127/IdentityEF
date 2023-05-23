@@ -1,8 +1,10 @@
 ﻿using Identity.Interfaces;
 using Identity.Models;
 using Identity.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Identity.Controllers
 {
@@ -112,7 +114,7 @@ namespace Identity.Controllers
         {
             if (ModelState.IsValid) 
             {
-            var result = await _signInManager.PasswordSignInAsync(loginViewModel.UserName, 
+            var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, 
                 loginViewModel.Password, loginViewModel.RememberMe, lockoutOnFailure:true);
              
                 if (result.Succeeded)
@@ -134,6 +136,72 @@ namespace Identity.Controllers
             }
             return View(loginViewModel);
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            var redirect = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirect);
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>ExternalLoginCallback(string returnurl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, "Error from External Provider");
+                return View("Login");
+            }
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null) { return RedirectToAction("Login"); }
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,info.ProviderKey, isPersistent: false);
+            if (result.Succeeded)
+            {
+                await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                return LocalRedirect(returnurl);
+            }
+            else
+            {
+                ViewData["ReturnUrl"] = returnurl;
+                ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                return View("ExternalLoginConfirmation", new ExternalLoginViewModel { Email = email });
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginViewModel externalLoginViewModel, string? returnurl = null)
+        {
+            returnurl = returnurl ?? Url.Content("~/");
+            if (ModelState.IsValid)
+            {
+                var info = await _signInManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View("Error");
+                }
+                var user = new AppUser { UserName = externalLoginViewModel.Name, Email = externalLoginViewModel.Email };
+                var result = await _userManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    result=await _userManager.AddLoginAsync(user, info);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                        return LocalRedirect(returnurl);
+                    }
+                }
+                ModelState.AddModelError("Email", "Could not login user/User already Exists");
+            }
+            ViewData["ReturnUrl"] = returnurl;
+            return View(externalLoginViewModel);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
@@ -146,6 +214,8 @@ namespace Identity.Controllers
         {
             return View();
         }
+       
+
 
         
     }

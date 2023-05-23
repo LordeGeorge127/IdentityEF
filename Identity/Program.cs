@@ -9,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.AppId = "test"; options.AppSecret = "test";
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = "979906540349-qf3rgjj3b1viruqbts359qpbpqv7qf7g.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+    });
+    
 builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.Password.RequiredLength = 5;

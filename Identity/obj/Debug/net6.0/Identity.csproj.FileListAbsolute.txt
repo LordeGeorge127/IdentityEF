@@ -187,3 +187,5 @@ C:\Projects\IdentityEF\Identity\obj\Debug\net6.0\scopedcss\projectbundle\Identit
 C:\Projects\IdentityEF\Identity\obj\Debug\net6.0\Identity.csproj.CopyComplete
 C:\Projects\IdentityEF\Identity\obj\Debug\net6.0\Identity.genruntimeconfig.cache
 C:\Projects\IdentityEF\Identity\obj\Debug\net6.0\ref\Identity.dll
+C:\Projects\IdentityEF\Identity\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Facebook.dll
+C:\Projects\IdentityEF\Identity\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll

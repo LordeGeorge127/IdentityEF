@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Nlb9lt1zkSY1VS11f7lFgOXX/53Hrsew4OQaWZwJqpueZmw4Ctdf8E2n+4NLfeVGnpyu/HLyL1jLfWZJG66JgQ==",
+  "dgSpecHash": "BePZc/gph5OUxEQFd0GgfWRd1mk2i/b7HqJPchJP9AqmdisRNpMEVBdr3P45d2yCgilDbuFEKF8TRZg3AVc57A==",
   "success": true,
   "projectFilePath": "C:\\Projects\\IdentityEF\\Identity\\Identity.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,8 @@
     "C:\\Users\\Lorde\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
     "C:\\Users\\Lorde\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnet.identity.core\\2.2.3\\microsoft.aspnet.identity.core.2.2.3.nupkg.sha512",
+    "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\6.0.16\\microsoft.aspnetcore.authentication.facebook.6.0.16.nupkg.sha512",
+    "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\6.0.16\\microsoft.aspnetcore.authentication.google.6.0.16.nupkg.sha512",
     "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.16\\microsoft.aspnetcore.cryptography.internal.6.0.16.nupkg.sha512",
     "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.16\\microsoft.aspnetcore.cryptography.keyderivation.6.0.16.nupkg.sha512",
     "C:\\Users\\Lorde\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\6.0.16\\microsoft.aspnetcore.identity.entityframeworkcore.6.0.16.nupkg.sha512",
