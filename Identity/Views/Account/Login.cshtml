@@ -1,7 +1,7 @@
 ﻿@model LoginViewModel
 @using Identity.ViewModel;
 @using Microsoft.AspNetCore.Identity;
-@inject SignInManager<IdentityUser> signInManager
+@inject SignInManager<AppUser> signInManager
 
 
 <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
